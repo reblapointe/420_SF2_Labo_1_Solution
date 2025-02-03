@@ -10,31 +10,31 @@ class Collection:
         self._proprietaire = proprietaire
         self._mineraux = []
 
-    def get_mineraux(self):
+    def get_mineraux(self) -> list[Mineral]:
+        '''getter sur la liste des minéraux'''
         return self._mineraux.copy()
     
-    def ajouter_mineral(self, mineral):
+    def ajouter_mineral(self, mineral:Mineral):
         '''Ajoute un mineral à la collection'''
         self._mineraux.append(mineral)
 
-    def description(self):
+    def description(self) -> str:
         '''Génère une description textuelle de la collection'''
         est_radioactif = False
         d = f"{self._nom}  [{self._proprietaire}] : "
         for m in self._mineraux:
-            if m.radioactivite:
+            if m.get_radioactivite():
                 est_radioactif = True
             d += f"   {m.description()},\n" 
         if est_radioactif :
             d += "Attention, cette collection contient un ou des minéraux radioactif(s)"
         return d
     
-    def gagnant(self):
+    def gagnant(self) -> Mineral:
         '''Détermine le meilleur minéral parmi la collection'''
         if len(self._mineraux) == 0:
             return None
         gagnant = self._mineraux[0]
         for adversaire in self._mineraux[1:]:
-            #print(f"{gagnant.nom} vs {adversaire.nom} : {gagnant.nom}")
             gagnant = Mineral.combat(gagnant, adversaire)
         return gagnant

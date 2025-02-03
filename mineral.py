@@ -11,7 +11,7 @@ class Mineral:
     MIN_DURETE = 1
     MAX_DURETE = 10
     
-    def __init__(self, nom:str, formule_chimique:str, couleur:str, eclat:str, radioactivite:bool, durete:int, masse_volumique:float):
+    def __init__(self, nom:str, formule_chimique:str, couleur:CouleurRGB, eclat:str, radioactivite:bool, durete:int, masse_volumique:float):
         self.__nom = nom
 
         if len(formule_chimique) > 0:
@@ -34,42 +34,36 @@ class Mineral:
             raise ValueError(f"La dureté doit se situer entre {Mineral.MIN_DURETE} et {Mineral.MAX_DURETE}")
 
 
-    @property
-    def nom(self):
+    def get_nom(self) -> str:
+        '''Getter sur le nom'''
         return self.__nom
-
-    @property
-    def symbole(self):
-        return self.__symbole
-
-    @property
-    def couleur(self):
-        return self.__couleur
-
-    @property
-    def eclat(self):
-        return self.__eclat
-
-    @property
-    def radioactivite(self):
+    
+    def get_radioactivite(self) -> bool:
+        '''Getter sur la radioactivite'''
         return self.__radioactivite
+    
+    def description_durete(self) -> str:
+        '''Fabrique une description textuelle de la dureté du minéral'''
+        if self.__durete < 2:
+            return "très mou"
+        if self.__durete < 5:
+            return "mou"
+        if self.__durete < 7:
+            return "moyen"
+        if self.__durete < 10:
+            return "dur"
+        return "très dur"
 
-    @property
-    def durete(self):
-        return self.__durete
-
-    @property
-    def masse_volumique(self):
-        return self.__masse_volumique
-
-    def description(self):
+    def description(self) -> str:
         '''Fabrique une description textuelle du minéral'''
-        return (f"{self.nom}  [{self.symbole}] " +
-                f"Couleur : {self.couleur.description()}, " +
-                f"Éclat : {self.eclat}, " +
-                f"Dureté : {self.durete}, " +
-                f"Éclat : {self.eclat}, " +
-                f"Masse Volumique : {self.masse_volumique} g/cm³")
+        radioactivite = ", RADIOACTIF" if self.__radioactivite else ""
+        return (f"{self.__nom}  [{self.__symbole}] " +
+                f"Couleur : {self.__couleur.description()}, " +
+                f"Éclat : {self.__eclat}, " +
+                f"Dureté : {self.__durete} ({self.description_durete()}), " +
+                f"Éclat : {self.__eclat}, " +
+                f"Masse Volumique : {self.__masse_volumique} g/cm³"+
+                radioactivite)
     
     def combat(a, b):
         '''
@@ -82,20 +76,20 @@ class Mineral:
         Mineral.nb_combats += 1
         if a.__radioactivite and not b.__radioactivite:
             return a
-        elif not a.radioactivite and b.__radioactivite:
+        elif not a.__radioactivite and b.__radioactivite:
             return b
-        elif a.masse_volumique > b.masse_volumique:
+        elif a.__masse_volumique > b.__masse_volumique:
             return a
-        elif a.masse_volumique < b.masse_volumique:
+        elif a.__masse_volumique < b.__masse_volumique:
             return b
         else:
-            return a if a.durete >= b.durete else b
+            return a if a.__durete >= b.__durete else b
     
     
-    def masse_vers_volume(self, masse):
+    def masse_vers_volume(self, masse:float)-> float:
         '''calcule le volume du minéral pour une masse'''
-        return masse / self.masse_volumique 
+        return masse / self.__masse_volumique 
     
-    def volume_vers_masse(self, volume):
+    def volume_vers_masse(self, volume:float) -> float:
         '''calcule la masse du minéral pour un volume'''
-        return self.masse_volumique * volume
+        return self.__masse_volumique * volume
